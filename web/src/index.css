@@ -1,7 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-	body {}
+html {
+	background: #0c0c0e;
+	color: #f0f0f2;
+	font-family: 'Barlow', sans-serif;
+	-webkit-font-smoothing: antialiased;
+}
+
+body {
+	min-height: 100dvh;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+	font-family: 'Barlow Condensed', sans-serif;
 }
