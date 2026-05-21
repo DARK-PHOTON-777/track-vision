@@ -1,4 +1,5 @@
-import React, { useRef, useState, DragEvent } from 'react';
+import React, { useRef, useState, DragEvent } from "react";
+import { Spinner } from "./Spinner";
 
 interface Props {
 	modelReady: boolean;
@@ -9,12 +10,6 @@ interface Props {
 }
 
 const ACCEPTED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-
-function Spinner() {
-	return (
-		<span className="w-16 h-16 rounded-full border-[3px] border-white/10 border-t-red-500 animate-spin block" />
-	);
-}
 
 export default function ImageDrop({ modelReady, blobURL, classifying, onFile, onReset }: Props) {
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -73,7 +68,7 @@ export default function ImageDrop({ modelReady, blobURL, classifying, onFile, on
 				{/* Overlay when classifying */}
 				{classifying && (
 					<div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/60 z-10">
-						<Spinner />
+						<Spinner size="lg" />
 						<span className="font-display font-bold text-md uppercase text-white/50">
 							Analyzing…
 						</span>
@@ -83,7 +78,7 @@ export default function ImageDrop({ modelReady, blobURL, classifying, onFile, on
 				{/* Model loading overlay */}
 				{!modelReady && !classifying && (
 					<div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/40 z-10">
-						<Spinner />
+						<Spinner size="lg" />
 						<span className="font-display font-bold text-md uppercase text-white/60">
 							Loading model…
 						</span>
