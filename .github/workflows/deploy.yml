@@ -61,22 +61,19 @@ jobs:
             echo "wasm-pack is already installed at $(command -v wasm-pack), skipping installer."
           fi
 
-      # Only runs if WASM cache misses
-      - name: Build WASM
-        if: steps.wasm-cache.outputs.cache-hit != 'true'
-        env:
-          RUSTFLAGS: "--cfg=web_sys_unstable_apis"
-        run: |
-          cd rust
-          wasm-pack build --target web --out-dir ../web/src/wasm
-
-      # Node steps run regardless, because Vite needs the WASM files (cached or fresh)
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm' # Optimized built-in caching for node_modules
           cache-dependency-path: ./web/package-lock.json
+
+      # Only runs if WASM cache misses
+      - name: Build WASM
+        if: steps.wasm-cache.outputs.cache-hit != 'true'
+        run: |
+          cd rust
+          npm run build
 
       - name: Install dependencies & Build Vite
         run: |

@@ -1,0 +1,10 @@
+{
+	"name": "track-vision-rust",
+	"private": true,
+	"version": "0.1.0",
+	"type": "module",
+	"author": "DARK-PHOTON-777",
+	"scripts": {
+		"build": "wasm-pack build --target web --out-dir ../web/src/wasm"
+	}
+}
