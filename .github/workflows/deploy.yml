@@ -21,7 +21,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Move this to the top to act as the primary gatekeeper
+      # 1. Primary Gatekeeper: Look for pre-compiled WASM bindgen outputs
       - name: Cache Compiled WASM Artifacts
         id: wasm-cache
         uses: actions/cache@v4
@@ -29,14 +29,14 @@ jobs:
           path: web/src/wasm
           key: ${{ runner.os }}-wasm-${{ hashFiles('rust/src/**', 'rust/Cargo.lock') }}
 
-      # Only runs if WASM cache misses
+      # 2. Rust Toolchain (Only if WASM cache misses)
       - name: Set up Rust
         if: steps.wasm-cache.outputs.cache-hit != 'true'
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown
 
-      # Only runs if WASM cache misses
+      # 3. Cargo Target & Registry Cache (Only if WASM cache misses)
       - name: Cache Cargo Dependencies
         if: steps.wasm-cache.outputs.cache-hit != 'true'
         uses: actions/cache@v4
@@ -46,11 +46,12 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             rust/target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('rust/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ hashFiles('rust/Cargo.lock') }}-${{ hashFiles('rust/src/**') }}
           restore-keys: |
+            ${{ runner.os }}-cargo-${{ hashFiles('rust/Cargo.lock') }}-
             ${{ runner.os }}-cargo-
 
-      # Only runs if WASM cache misses
+      # 4. Install wasm-pack binaries safely (Only if WASM cache misses)
       - name: Install wasm-pack
         if: steps.wasm-cache.outputs.cache-hit != 'true'
         run: |
@@ -58,29 +59,33 @@ jobs:
             echo "wasm-pack not found, installing..."
             curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
           else
-            echo "wasm-pack is already installed at $(command -v wasm-pack), skipping installer."
+            echo "wasm-pack is already installed, skipping."
           fi
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm' # Optimized built-in caching for node_modules
-          cache-dependency-path: ./web/package-lock.json
-
-      # Only runs if WASM cache misses
+      # 5. Compile WASM (Only if WASM cache misses)
+      # This step must successfully generate files straight into 'web/src/wasm' so step #1 can save it at the end
       - name: Build WASM
         if: steps.wasm-cache.outputs.cache-hit != 'true'
         run: |
           cd rust
           npm run build
 
+      # 6. Set up Node.js for Web Frontend
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+
+      # 7. Always build the Vite frontend
       - name: Install dependencies & Build Vite
         run: |
           cd web
           npm ci
           npm run build
 
+      # 8. Production Page Deployment Upload
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
