@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import ImageDrop from "./ImageDrop";
+import ImageDrop from "./ImageDrop.tsx";
 import init, { ModelSession } from "./wasm/rust_wasm";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
