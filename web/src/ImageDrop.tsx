@@ -122,7 +122,6 @@ export default function ImageDrop({ modelReady, blobURL, classifying, onFile, on
 				ref={inputRef}
 				type="file"
 				accept="image/*"
-				capture="environment"
 				onChange={handleChange}
 				className="hidden"
 			/>
