@@ -1,0 +1,8 @@
+# Data
+dataset/
+
+# Python
+### Virtual environment
+.venv/
+### Python Cache
+__pycache__/
