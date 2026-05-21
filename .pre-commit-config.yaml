@@ -1,0 +1,6 @@
+# .pre-commit-config.yaml
+repos:
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.8.1  # Uses the stable release version
+    hooks:
+      - id: nbstripout

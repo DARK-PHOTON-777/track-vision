@@ -1,0 +1,25 @@
+{
+	"folders": [
+		{
+			"name": "Track Vision",
+			"path": "."
+		},
+		{
+			"name": "Rust",
+			"path": "rust"
+		},
+		{
+			"name": "Web",
+			"path": "web"
+		},
+		{
+			"name": "Model",
+			"path": "model"
+		}
+	],
+	"settings": {
+		"editor.tabSize": 4,
+		"editor.insertSpaces": false,
+		"editor.detectIndentation": false,
+	}
+}

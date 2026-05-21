@@ -1,0 +1,16 @@
+[project]
+name = "track-vision"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = []
+
+[tool.uv.workspace]
+	members = ["model"]
+
+[tool.uv]
+dev-dependencies = [
+	"pre-commit",
+	"nbstripout",
+]
