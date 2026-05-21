@@ -1,0 +1,94 @@
+name: Deploy Track Vision
+
+on:
+  push:
+    branches: [ STABLE ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Move this to the top to act as the primary gatekeeper
+      - name: Cache Compiled WASM Artifacts
+        id: wasm-cache
+        uses: actions/cache@v4
+        with:
+          path: web/src/wasm
+          key: ${{ runner.os }}-wasm-${{ hashFiles('rust/src/**', 'rust/Cargo.lock') }}
+
+      # Only runs if WASM cache misses
+      - name: Set up Rust
+        if: steps.wasm-cache.outputs.cache-hit != 'true'
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      # Only runs if WASM cache misses
+      - name: Cache Cargo Dependencies
+        if: steps.wasm-cache.outputs.cache-hit != 'true'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            rust/target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('rust/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      # Only runs if WASM cache misses
+      - name: Install wasm-pack
+        if: steps.wasm-cache.outputs.cache-hit != 'true'
+        run: |
+          if ! command -v wasm-pack &> /dev/null; then
+            echo "wasm-pack not found, installing..."
+            curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+          else
+            echo "wasm-pack is already installed at $(command -v wasm-pack), skipping installer."
+          fi
+
+      # Only runs if WASM cache misses
+      - name: Build WASM
+        if: steps.wasm-cache.outputs.cache-hit != 'true'
+        env:
+          RUSTFLAGS: "--cfg=web_sys_unstable_apis"
+        run: |
+          cd rust
+          wasm-pack build --target web --out-dir ../web/src/wasm
+
+      # Node steps run regardless, because Vite needs the WASM files (cached or fresh)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm' # Optimized built-in caching for node_modules
+          cache-dependency-path: ./web/package-lock.json
+
+      - name: Install dependencies & Build Vite
+        run: |
+          cd web
+          npm ci
+          npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './web/dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
