@@ -35,13 +35,14 @@ Ensure you have the following tools installed:
 * [uv](https://github.com/astral-sh/uv) (Modern Python package manager)
 * [Node.js & npm](https://nodejs.org/)
 * [Rust & wasm-pack](https://rustwasm.github.io/wasm-pack/installer/)
-
 ---
 
 ## Installation & Build Workflow
 
 ### 1. Model Generation (Python)
 The `model/` directory contains Jupyter notebooks responsible for generating labeled datasets, training the network, and exporting the weights.
+
+You will need `coasters.json` file from [RCDB API](https://github.com/fabianrguez/rcdb-api).
 
 Use `uv` to instantly sync dependencies and spin up the environment:
 ```bash

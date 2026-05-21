@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
-import ImageDrop from "./ImageDrop";
-import init, { ModelSession } from "./wasm/rust_wasm";
+import ImageDrop from "./components/ImageDrop.tsx";
+import { Spinner } from "./components/Spinner.tsx";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+import init, { ModelSession } from "./wasm/rust_wasm";
 
 interface Match {
 	name: string;
@@ -30,21 +30,6 @@ const SAMPLES = [
 	},
 	{ name: "Mako", make: "B&M", src: "./images/mako.jpg" },
 ];
-
-function Spinner({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
-	const s =
-		size === "sm"
-			? "w-4 h-4 border-2"
-			: size === "lg"
-				? "w-10 h-10 border-4"
-				: "w-7 h-7 border-[3px]";
-	return (
-		<span
-			className={`${s} rounded-full border-white/10 border-t-red-500 animate-spin block`}
-			aria-label="Loading"
-		/>
-	);
-}
 
 export default function App() {
 	const [model, setModel] = useState<ModelState>({ tag: "loading" });
