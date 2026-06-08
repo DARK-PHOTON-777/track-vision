@@ -4,6 +4,8 @@ Track-Vision is a high-performance web application designed to instantly identif
 
 By leveraging Rust compiled to WebAssembly (WASM), the app runs machine learning inference entirely client-side in the browser, ensuring blazing-fast, private, and serverless processing.
 
+# [Try Here](https://dark-photon-777.github.io/track-vision/)
+
 ---
 
 ## Tech Stack & Architecture
