@@ -254,7 +254,7 @@ export default function App() {
 				</a>
 				<span className="opacity-30">·</span>
 				<a
-					href="https://reno-warner.github.io/portfolio/"
+					href="https://dark-photon-777.github.io/portfolio/"
 					target="_blank"
 					rel="noopener noreferrer"
 					className="hover:text-red-500 transition-colors"
